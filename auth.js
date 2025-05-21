@@ -8,12 +8,12 @@ import {
 } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js';
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-app.firebaseapp.com",
-  projectId: "your-app-id",
-  storageBucket: "your-app.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
+  apiKey: "AIzaSyDGNwhOnIJueQVdmrJP2G7ffgLUiI6odxY",
+  authDomain: "gemstone-accounting.firebaseapp.com",
+  projectId: "gemstone-accounting",
+  storageBucket: "gemstone-accounting.firebasestorage.app",
+  messagingSenderId: "77908057882",
+  appId: "1:77908057882:web:262f97ad2bd84058b016a3"
 };
 
 // Initialize Firebase
