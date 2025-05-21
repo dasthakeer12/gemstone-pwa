@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F2F2F7">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title id="dynamicTitle">Gemstone Accounting Suite</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="app-container">
+        <div id="connectionStatus" class="connection-status offline">
+            <i class="fas fa-unlink"></i> <span class="status-text">Offline</span>
+        </div>
+
+        <div id="syncStatus" class="sync-status">
+            <i class="fas fa-cloud"></i>
+            <span class="sync-text">Initializing...</span>
+        </div>
+
+        <header class="app-header">
+            <h1 class="app-title">
+                <i class="fas fa-gem"></i> <span id="appTitleDisplay">Gemstone Tracker</span>
+            </h1>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="transactions">
+                <i class="fas fa-chart-line"></i>
+                <span>Sales</span>
+            </button>
+            <button class="tab" data-tab="cancel">
+                <i class="fas fa-ban"></i>
+                <span>Cancel</span>
+            </button>
+            <button class="tab" data-tab="expenses">
+                <i class="fas fa-wallet"></i>
+                <span>Expenses</span>
+            </button>
+            <button class="tab" data-tab="reports">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </button>
+            <button class="tab" data-tab="settings">
+                <i class="fas fa-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <main>
+            <!-- Transactions Tab -->
+            <section id="transactions" class="tab-content active">
+                <div class="card">
+                    <h2><i class="fas fa-file-invoice"></i> New Transaction</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="txnDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Sale ID</label>
+                            <input type="text" id="saleId" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="description" placeholder="Sapphire - Royal Blue">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Weight (cT.)</label>
+                            <input type="number" id="weight" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Purchase Price</label>
+                            <input type="number" id="purchasePrice" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Certificate Charges</label>
+                            <input type="number" id="certCharges" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Exchange Rate</label>
+                            <input type="number" id="exchangeRate" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sold Price (¥ RMB)</label>
+                        <input type="number" id="soldPriceRMB" step="0.01" placeholder="0.00">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Commission Employee</label>
+                            <select id="commissionEmployee" class="styled-select">
+                                <option value="none">No Commission</option>
+                                <!-- Employees will be added dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Commission (%)</label>
+                            <input type="number" id="commission" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <button onclick="saveTransaction()" class="primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button onclick="clearTransactionForm()" class="secondary">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+
+                    <div id="autoCalculations" class="calc-results">
+                        <div class="calc-row">
+                            <span>Total Cost:</span>
+                            <span id="totalcostDisplay">Rs.0.00</span>
+                        </div>
+                        <div class="calc-row">
+                            <span>Converted Sale:</span>
+                            <span id="convertedsaleDisplay">Rs.0.00</span>
+                        </div>
+                        <div class="calc-row highlight">
+                            <span>Net Profit/Loss:</span>
+                            <span id="netprofitLossDisplay">Rs.0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cancel Transaction Tab -->
+            <section id="cancel" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-times-circle"></i> Cancel Transaction</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="cancelSaleId" placeholder="Enter Sale ID (GS-00001)" class="full-width">
+                        </div>
+                        <button onclick="loadCancellationDetails()" class="secondary">
+                            <i class="fas fa-search"></i> Load
+                        </button>
+                    </div>
+
+                    <div id="originalTransactionPreview" class="hidden">
+                        <h3>Original Transaction Details</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Date:</label>
+                                <span id="originalDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Description:</label>
+                                <span id="originalDescription">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Purchase Price:</label>
+                                <span id="originalPurchase">Rs.0.00</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Sold Price:</label>
+                                <span id="originalSale">Rs.0.00</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Certificate Charges:</label>
+                                <span id="originalCertCharges">Rs.0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="cancellation-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Canceling will remove purchase/sale amounts and record certificate charges as 50-50 loss
+                        </div>
+
+                        <button onclick="confirmCancellation()" class="danger">
+                            <i class="fas fa-ban"></i> Confirm Cancellation
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Cancel Expense</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="cancelExpenseId" placeholder="Enter Expense ID (EXP-00001)" class="full-width">
+                        </div>
+                        <button onclick="loadExpenseCancellationDetails()" class="secondary">
+                            <i class="fas fa-search"></i> Load
+                        </button>
+                    </div>
+
+                    <div id="originalExpensePreview" class="hidden">
+                        <h3>Original Expense Details</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Date:</label>
+                                <span id="originalExpenseDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Type:</label>
+                                <span id="originalExpenseType">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Amount:</label>
+                                <span id="originalExpenseAmount">Rs.0.00</span>
+                            </div>
+                        </div>
+
+                        <button onclick="confirmExpenseCancellation()" class="danger">
+                            <i class="fas fa-ban"></i> Confirm Cancellation
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expenses Tab -->
+            <section id="expenses" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Record Expense</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="expenseDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (LKR)</label>
+                            <input type="number" id="expenseAmount" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Expense Type</label>
+                            <select id="expenseType" class="styled-select">
+                                <option value="Utility Mobile">Utility - Mobile</option>
+                                <option value="Utility Telephone">Utility - Telephone</option>
+                                <option value="Utility Electricity">Utility - Electricity</option>
+                                <option value="Office Rent">Office Rent</option>
+                                <option value="Food Expenses">Food Expenses</option>
+                                <option value="Travel Expenses">Travel Expenses</option>
+                                <option value="Fuel Expenses">Fuel Expenses</option>
+                                <option value="Car Maintenance">Car Maintenance</option>
+                                <option value="Commission Payment">Commission Payment</option>
+                                <option value="Official Donation">Official Donation</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="expense-notice">
+                        <i class="fas fa-info-circle"></i>
+                        All expenses will be split 50-50 between partners
+                    </div>
+
+                    <button onclick="saveExpense()" class="primary">
+                        <i class="fas fa-save"></i> Save Expense
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-history"></i> Recent Expenses</h3>
+                    <div id="recentExpenses" class="expense-list">
+                        <p>Loading expenses...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Tab -->
+            <section id="reports" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From Date</label>
+                            <input type="date" id="reportStartDate">
+                        </div>
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input type="date" id="reportEndDate">
+                        </div>
+                    </div>
+                    <nav class="sub-tabs">
+                        <button class="sub-tab active" data-subtab="full-report">Full Report</button>
+                        <button class="sub-tab" data-subtab="expenses-report">Expenses Report</button>
+                        <button class="sub-tab" data-subtab="commission-report">Commission Report</button>
+                        <button class="sub-tab" data-subtab="employee-commission">Employee Commission</button>
+                        <button class="sub-tab" data-subtab="partner-report">Partner Report</button>
+                    </nav>
+                    <div class="form-row">
+                        <button onclick="generateReport()" class="primary">
+                            <i class="fas fa-refresh"></i> Generate
+                        </button>
+                        <button onclick="exportReportToPDF()" class="secondary">
+                            <i class="fas fa-download"></i> Export PDF
+                        </button>
+                    </div>
+                    <div id="reportResults"></div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settings" class="tab-content">
+                <div class="card">
+                    <h2><i class="fas fa-cog"></i> Application Settings</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Application Name</label>
+                            <input type="text" id="appName" placeholder="Gemstone Tracker">
+                        </div>
+                        <div class="form-group">
+                            <label>Title Font Weight</label>
+                            <select id="titleFontWeight" class="styled-select">
+                                <option value="400">Normal</option>
+                                <option value="500">Medium</option>
+                                <option value="600" selected>Semi-bold</option>
+                                <option value="700">Bold</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Default Exchange Rate</label>
+                        <input type="number" id="defaultExchangeRate" step="0.01" placeholder="50.00">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Default Commission (%)</label>
+                            <input type="number" id="defaultCommission" step="0.01" placeholder="2.00">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Partner A Share (%)</label>
+                            <input type="number" id="partnerAShare" min="0" max="100" placeholder="60">
+                        </div>
+                        <div class="form-group">
+                            <label>Partner B Share (%)</label>
+                            <input type="number" id="partnerBShare" min="0" max="100" placeholder="40">
+                        </div>
+                    </div>
+
+                    <button onclick="saveSettings()" class="primary">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-users-cog"></i> Employee Management</h3>
+                    <div class="form-group">
+                        <label>Employee Name</label>
+                        <input type="text" id="employeeName" placeholder="Employee Full Name">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Joined Date</label>
+                            <input type="date" id="employeeJoinDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Commission (%)</label>
+                            <input type="number" id="employeeCommission" step="0.01" placeholder="2.00">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button onclick="addEmployee()" class="primary">
+                            <i class="fas fa-plus"></i> Add Employee
+                        </button>
+                    </div>
+                    
+                    <div id="employeeList" class="employee-grid">
+                        <!-- Employee list will be populated here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-database"></i> Data Management</h3>
+                    <div class="form-row">
+                        <button onclick="exportData()" class="secondary">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
+                        <button onclick="importData()" class="secondary">
+                            <i class="fas fa-upload"></i> Import Data
+                        </button>
+                        <button onclick="syncWithGoogleSheets()" class="secondary">
+                            <i class="fas fa-sync"></i> Sync Now
+                        </button>
+                    </div>
+
+                    <div>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                        <button onclick="clearAllData()" class="danger">
+                            <i class="fas fa-trash"></i> Clear All Data
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="loadingMessage">Loading...</p>
+            </div>
+        </div>
+
+        <div id="errorToast" class="error-toast hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorMessage"></span>
+            <button onclick="hideError()" class="icon-button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+        <script src="app.js"></script>
+    </div>
+</body>
+</html>

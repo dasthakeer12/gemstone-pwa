@@ -1,0 +1,68 @@
+{
+  "name": "Gemstone Accounting Suite",
+  "short_name": "Gemstone",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4285f4",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/screenshot1.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "description": "Dashboard view"
+    },
+    {
+      "src": "screenshots/screenshot2.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "description": "Transaction form"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "Fast",
+    "Simple"
+  ],
+  "categories": [
+    "finance",
+    "business",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "New Transaction",
+      "short_name": "New",
+      "description": "Create a new transaction",
+      "url": "/index.html#transactions",
+      "icons": [{ "src": "icons/add.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Reports",
+      "short_name": "Reports",
+      "description": "View financial reports",
+      "url": "/index.html#reports",
+      "icons": [{ "src": "icons/chart.png", "sizes": "192x192" }]
+    }
+  ]
+}
