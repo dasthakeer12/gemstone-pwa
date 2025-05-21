@@ -123,6 +123,15 @@ async function loadInitialData() {
   }
 }
 
+async function logout() {
+  try {
+    await logoutUser();
+    window.location.href = 'login.html';
+  } catch (error) {
+    showError(`Logout failed: ${error.message}`);
+  }
+}
+
 function updateUIWithSettings() {
   const { appName, titleFontWeight } = accountingData.settings;
   document.getElementById('dynamicTitle').textContent = appName;

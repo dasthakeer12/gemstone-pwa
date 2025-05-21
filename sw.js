@@ -2,6 +2,7 @@ const CACHE_NAME = 'gemstone-accounting-v3';
 const ASSETS = [
   '/',
   '/index.html',
+  '/login.html'
   '/styles.css',
   '/app.js',
   '/manifest.json',
