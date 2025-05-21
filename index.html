@@ -72,6 +72,15 @@
                         <input type="text" id="description" placeholder="Sapphire - Royal Blue">
                     </div>
 
+                    <!-- Employee Select Dropdown -->
+                    <div class="form-group">
+                        <label>Employee</label>
+                        <select id="employeeSelect" class="form-control">
+                            <option value="">No Employee</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Weight (cT.)</label>
@@ -101,17 +110,12 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Commission Employee</label>
-                            <select id="commissionEmployee" class="styled-select">
-                                <option value="none">No Commission</option>
-                                <!-- Employees will be added dynamically -->
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label>Commission (%)</label>
                             <input type="number" id="commission" step="0.01">
                         </div>
-                <div class="form-row">
+                    </div>
+
+                    <div class="form-row">
                         <button onclick="saveTransaction()" class="primary">
                             <i class="fas fa-save"></i> Save
                         </button>
@@ -119,6 +123,7 @@
                             <i class="fas fa-eraser"></i> Clear
                         </button>
                     </div>
+
                     <div id="autoCalculations" class="calc-results">
                         <div class="calc-row">
                             <span>Total Cost:</span>
@@ -185,6 +190,7 @@
                     </div>
                 </div>
 
+                <!-- Add this below the existing cancellation form -->
                 <div class="card" style="margin-top: 1.5rem;">
                     <h2><i class="fas fa-file-invoice-dollar"></i> Cancel Expense</h2>
                     <div class="form-row">
@@ -287,11 +293,10 @@
                         </div>
                     </div>
                     <nav class="sub-tabs">
-                        <button class="sub-tab active" data-subtab="full-report">Full Report</button>
-                        <button class="sub-tab" data-subtab="expenses-report">Expenses Report</button>
-                        <button class="sub-tab" data-subtab="commission-report">Commission Report</button>
-                        <button class="sub-tab" data-subtab="employee-commission">Employee Commission</button>
-                        <button class="sub-tab" data-subtab="partner-report">Partner Report</button>
+                        <button class="sub-tab active" data-subtab="transaction-report" id="transaction-report-tab">Transaction Report</button>
+                        <button class="sub-tab" data-subtab="canceled-report" id="canceled-report-tab">Canceled Report</button>
+                        <button class="sub-tab" data-subtab="purchase-commission-report" id="purchase-commission-report-tab">Purchase Commission Report</button>
+                        <button class="sub-tab" data-subtab="expenses-report" id="expenses-report-tab">Expenses Report</button>
                     </nav>
                     <div class="form-row">
                         <button onclick="generateReport()" class="primary">
@@ -354,30 +359,16 @@
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-users-cog"></i> Employee Management</h3>
-                    <div class="form-group">
-                        <label>Employee Name</label>
-                        <input type="text" id="employeeName" placeholder="Employee Full Name">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Joined Date</label>
-                            <input type="date" id="employeeJoinDate">
-                        </div>
-                        <div class="form-group">
-                            <label>Commission (%)</label>
-                            <input type="number" id="employeeCommission" step="0.01" placeholder="2.00">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <button onclick="addEmployee()" class="primary">
-                            <i class="fas fa-plus"></i> Add Employee
-                        </button>
-                    </div>
-                    
+                    <h3><i class="fas fa-users-cog"></i> Employee Commission Setup</h3>
                     <div id="employeeList" class="employee-grid">
-                        <!-- Employee list will be populated here -->
+                        <!-- Employee cards will be added here dynamically -->
                     </div>
+                    <button onclick="addEmployeeCard()" class="secondary">
+                        <i class="fas fa-plus"></i> Add Employee
+                    </button>
+                    <button onclick="saveEmployees()" class="primary">
+                        <i class="fas fa-save"></i> Save Employees
+                    </button>
                 </div>
 
                 <div class="card">
